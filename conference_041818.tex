@@ -1,4 +1,7 @@
 \documentclass[conference]{IEEEtran}
+
+\usepackage[utf8]{inputenc} % Para usar tildes en modo español
+
 \IEEEoverridecommandlockouts
 % The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
 \usepackage{cite}
@@ -12,9 +15,9 @@
 \begin{document}
 
 \title{Paper Title*\\
-{\footnotesize \textsuperscript{*}Note: Sub-titles are not captured in Xplore and
-should not be used}
-\thanks{Identify applicable funding agency here. If none, delete this.}
+%{\footnotesize \textsuperscript{*}Note: Sub-titles are not captured in Xplore and
+%should not be used}
+%\thanks{Identify applicable funding agency here. If none, delete this.}
 }
 
 \author{\IEEEauthorblockN{1\textsuperscript{st} Given Name Surname}
@@ -57,30 +60,35 @@ email address}
 \maketitle
 
 \begin{abstract}
-This document is a model and instructions for \LaTeX.
-This and the IEEEtran.cls file define the components of your paper [title, text, heads, etc.]. *CRITICAL: Do Not Use Symbols, Special Characters, Footnotes, 
-or Math in Paper Title or Abstract.
+El Tomógrafo por Emisión de Positrones Argentino (AR-PET) es un hecho y hoy en día se encuentra instalado y bajo caracterización en el Hospital de Clínicas José de San Martín de la Ciudad Autónoma de Buenos Aires, Argentina. Su estructura global se basa en 6 cámaras Gamma que de manera independiente pero sincronizadas logran realizar una colimación electrónica de las aniquilaciones Positrón-Electrón y así generar las Líneas de Respuesta (LOR) utilizadas para la reconstrucción de imágenes tomográficas. En este trabajo se presenta la implementación sobre Artix-7 de una de las cámara Gamma, que a razón de 1 millón de evento por segundo logra caracterizar en posición y energía a cada fotón que interacciona con su cristal centellador contínuo de Ioduro de Sodio (NAI).
 \end{abstract}
 
 \begin{IEEEkeywords}
-component, formatting, style, styling, insert
+FPGA, PET, cancer, tomography
 \end{IEEEkeywords}
 
 \section{Introduction}
-This document is a model and instructions for \LaTeX.
-Please observe the conference page limits. 
+En el marco del Tomógrafo por Emisión de Positrones Argentino (AR-PET), el módulo que mayor desarrollo VHDL en FPGA está integrado en el procesamiento de eventos de la cámara Gamma. Cada una de estas se compone de 48 FotoMultiplicadores (PMT), de 2"x2" en grilla de 6x8, adheridos con grasa óptica a un cristal contínuo de Ioduro de Sodio (NaI) de 30cmx40cm. Cada uno de estos detecta los centelleos del cristal cada vez que un fotón impacta en él, luego de preamplificarlo de manera analógica y digitalizarlo con una detección y caracterización en tiempo y energía de pulsos en Spartan-3, y así las 48 señales son recibidas por la Artix-7 que junta todo y bajo un simple control temporal conforma los eventos sumando energías y posicionando como centro de masas pesado por energía (Anger). De esta manera se notificará como salida de cada cámara Gamma la caracterización en tiempo. energía y geográfico de cada fotón que impacte en la cámara, usando esto luego para triangularlo y encontrar posibles conincidencias.
 
-\section{Ease of Use}
+\section{Procesamiento Planar}
 
-\subsection{Maintaining the Integrity of the Specifications}
+\subsection{Description}
 
-The IEEEtran class file is used to format your paper and style the text. All margins, 
-column widths, line spaces, and text fonts are prescribed; please do not 
-alter them. You may note peculiarities. For example, the head margin
-measures proportionately more than is customary. This measurement 
-and others are deliberate, using specifications that anticipate your paper 
-as one part of the entire proceedings, and not as an independent document. 
-Please do not revise any of the current designations.
+Cada uno de los 6 cabezales del PET cuenta con un cristal continuo de Ioduro de Sodio (NaI) de 30cm x 40cm que actúa como centellador, es decir, genera luz al ser impactado por un fotón.
+
+Debajo del cristal continuo hay un array de 48 PMTs (PhotoMultiplier Tube), los cuales se encargarán de digitalizar, con un procesamiento sobre Spartan-3, la luz centellada a un valor energético proporcional a la porción de luz que le corresponde del total que generó el fotón en el centellador, y una marca temporal indicativa del momento en el cuál ese evento fue detectado. Toda esta información es recibida por una Artix-7, que se encargará de no solo filtrar temporalmente los eventos para descartar los que no participaron del mismo destello, sino de realizar la triangulación espacial (por promedio pesado de Anger\citep{Anger}) y calcular la posición en la que el fotón impactó en el cristal. De esta manera se confecciona una cámara Gamma, que es sistema capaz de detectar no solo la energía de los fotones sino también la posición del mismo.
+
+\subsection{Implementation}
+
+El procesamiento planar cuenta con 48 entradas LVDS por las que cada Spartan-3 envía información cada 1us de energía detectada y marca temporal de la misma. Cada 1us, el procesamiento planar tiene que decidir si la información que está recibiendo corresponde todos al mismo evento. Para esto se utiliza una ventana temporal de 1ns para determinar el aporte individual de cada PMT en referencia a la marca temporal del que en ese momento obtuvo la mayor energía. Esta acumulación energética estará relacionada con la cantidad de luz en el centelleo del cristal detectada al mismo momento por varios PMTs. La acumulación de la historia de estas respuestas generan espectros energéticos similares al siguiente
+
+FOTO DE ESPECTRO de PMT independientes y conjunto (todo sin calibrar)
+
+En el caso de la Tomografía por Emisión de Positrones, la detección de fotones es mono energética y solo interesan aquellos con una energía de 511 keV. Es por esto que se realiza una calibración tal que escalando las energías de cada uno de los PMTs, se logre una espectro de energías lo más ajustado posible a 511 keV. Esta calibración es aplicada antes de la suma de las 48 energías y se obtienen lo siguientes resultados
+
+FOTO DE ESPECTRO de PMT independientes y conjunto (todo calibrado)
+
+
 
 \section{Prepare Your Paper Before Styling}
 Before you begin to format your paper, first write and save the content as a 
