@@ -20,41 +20,41 @@
 %\thanks{Identify applicable funding agency here. If none, delete this.}
 }
 
-\author{\IEEEauthorblockN{1\textsuperscript{st} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address}
-\and
-\IEEEauthorblockN{2\textsuperscript{nd} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address}
-\and
-\IEEEauthorblockN{3\textsuperscript{rd} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address}
-\and
-\IEEEauthorblockN{4\textsuperscript{th} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address}
-\and
-\IEEEauthorblockN{5\textsuperscript{th} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address}
-\and
-\IEEEauthorblockN{6\textsuperscript{th} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address}
+\author{\IEEEauthorblockN{Federico De La Cruz Arbizu, Matías A. Scremin}
+\IEEEauthorblockA{Instrumentación y Control - Centro Atómico de Ezeiza \\
+Comisión Nacional de Energía Atómica \\
+Buenos Aires, Argentina \\
+Email: \{arbizu,scremin\}@cae.cnea.gov.ar}
+% \and
+% \IEEEauthorblockN{2\textsuperscript{nd} Given Name Surname}
+% \IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
+% \textit{name of organization (of Aff.)}\\
+% City, Country \\
+% email address}
+% \and
+% \IEEEauthorblockN{3\textsuperscript{rd} Given Name Surname}
+% \IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
+% \textit{name of organization (of Aff.)}\\
+% City, Country \\
+% email address}
+% \and
+% \IEEEauthorblockN{4\textsuperscript{th} Given Name Surname}
+% \IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
+% \textit{name of organization (of Aff.)}\\
+% City, Country \\
+% email address}
+% \and
+% \IEEEauthorblockN{5\textsuperscript{th} Given Name Surname}
+% \IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
+% \textit{name of organization (of Aff.)}\\
+% City, Country \\
+% email address}
+% \and
+% \IEEEauthorblockN{6\textsuperscript{th} Given Name Surname}
+% \IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
+% \textit{name of organization (of Aff.)}\\
+% City, Country \\
+% email address}
 }
 
 \maketitle
@@ -68,26 +68,89 @@ FPGA, PET, cancer, tomography
 \end{IEEEkeywords}
 
 \section{Introduction}
-En el marco del Tomógrafo por Emisión de Positrones Argentino (AR-PET), el módulo que mayor desarrollo VHDL en FPGA está integrado en el procesamiento de eventos de la cámara Gamma. Cada una de estas se compone de 48 FotoMultiplicadores (PMT), de 2"x2" en grilla de 6x8, adheridos con grasa óptica a un cristal contínuo de Ioduro de Sodio (NaI) de 30cmx40cm. Cada uno de estos detecta los centelleos del cristal cada vez que un fotón impacta en él, luego de preamplificarlo de manera analógica y digitalizarlo con una detección y caracterización en tiempo y energía de pulsos en Spartan-3, y así las 48 señales son recibidas por la Artix-7 que junta todo y bajo un simple control temporal conforma los eventos sumando energías y posicionando como centro de masas pesado por energía (Anger). De esta manera se notificará como salida de cada cámara Gamma la caracterización en tiempo. energía y geográfico de cada fotón que impacte en la cámara, usando esto luego para triangularlo y encontrar posibles conincidencias.
+La tomografía por emisión de positrones (PET) es una técnica utilizada para detección temprana de enfermedades oncológicas, cardiovasculares y cognitivas, como por ejemplo detección temprana de Alzheimer y Parkinson, como así también para el seguimiento del tratamiento de cada una de estas patologías. El PET se basa en la dinámica metabólica del cuerpo humano, detectando aquellas situaciones donde se presentan actividades anormales en el proceso.
+La droga más común utilizada para los diagnósticos más habituales el la fluorodesoxiglucosa (FDG), la cual es una droga a base de glucosa marcada con un isótopo de 18F, el cual es emisor Beta+. La glucosa será metabolizada por aquellas zonas en las que sea mayor la demanda de energía, es decir, aquellas zonas donde la actividad celular es elevada, o donde la tasa de reproducción de las mismas sea mayor de lo habitual (como es el caso de las células cancérigenas activas). 
+La desintegración del 18F logra que en un camino medio de 2mm el Positón emitido se aniquile con un Electrón, generando una emisión de dos fotones de 511 keV en la misma dirección pero en sentido contrario. Esta particularidad es lo que permite que si se logra detectar ambos fotones, se puede generar una Linea de Respuesta (LOR) que pasa por el punto original de la aniquilación. La acumulación de estas líneas darán información de las zonas de mayor probabilidad de ubicación de la fuente emisora, es decir, el cancer en este caso.
+
+\textbf{\textit{La importancia de este desarrollo como proyecto nace de la necesidad de poder cubrir una necesidad social de poder tener el manejo total de una técnica de esta envergadura pero con costos de equipo, operación y mantenimiento mucho inferiores a lo que hoy en día se encuentra en mercado, pudiendo así poder llegar a lo ancho y largo del país, permitiendo que el PET se convierta en una herramienta para los médicos realmente accesible en los hospitales públicos del país, falencia que hoy en día sufre la medicina nuclear argentina.}}
 
 \section{Procesamiento Planar}
 
-\subsection{Description}
+\subsection{Funcionalidad}
 
-Cada uno de los 6 cabezales del PET cuenta con un cristal continuo de Ioduro de Sodio (NaI) de 30cm x 40cm que actúa como centellador, es decir, genera luz al ser impactado por un fotón.
+El Procesamiento Planar, implementado sobre una Artix-7, sintetiza la funcionalidad global de una de las 6 cámara Gamma que posee el AR-PET. De manera independiente una a otra confeccionan en sí misma una cámara Gamma convencional con cristal continuo de Ioduro de Sodio (NaI), es decir, es un instrumento que permite la detectabilidad en el plano de incidencia de fotones Gamma, pudiendo detectar no solo la ubicación del impacto, sino también el momento preciso del mismo como también la energía del evento, es decir, realizar la espectrometría del campo de irradación en el que se encuentra inmerso la cámara.
+Si se colocan dos cámara Gamma enfrentadas y sincrónicas, y se tiene como fuente radiactiva un emisor Beta+, se puede realizar una colimación electrónica con la búsqueda de coincidencias entre ambas, pudiendo seleccionar de ese modo el ángulo específico de los rayos de interés. 
+Finalmente, si se colocan 6 cámara Gamma sincrónicas, en forma de hexágono, equidistantes, se obtiene la disposición del AR-PET, pudiendo detectar la dirección de todas las LORs que entran en juego en el campo de visión (FOV) del equipo.
+
+\subsection{Estructura}
+
+Como se mencionó, la cámara Gamma cuenta con un cristal centellador continuo de NaI \textit{\textbf{nombrar a AlphaSpectra y Sangobain?}} que oficia de transductor, convirtiendo un fotón Gamma en un destello luminoso en el espectro visible. Sus dimensiones son de 30x40 cm2 y se encuentra recubierto de una fina lámila de aluminio para su protección. Del lado interno a la cámara se encuentra recubierto de \textit{\textbf{Vidrio?}} para lograr un buen acople con los FotoMultiplicadores (PMT) \textit{\textbf{decir que son de Hamamatsu?}}.
+Un PMT es una válvula de vacío polarizada en alta tensión (alrededor de 1200V) que realiza una multiplicación \textit{\textbf{catódica?}} de electrones. Cuando un fotón del espectro visible ingresa a la ventana de amplificación del mismo se realiza una reacción encascada que genera una multiplicación de entre \textit{\textbf{1 y 10 millones de veces? hablar de esta alinealidad?}}, obteniendo en su salida un pulso electrónico, al que llamaremos pulso nuclear, con las constantes de crecimiento y decrecimiento características del NaI.
+Los PMT utilizados tienen dimensiones cuadradas de 2x2pulgadas2 y al ser también de vidrio, se acoplan con grasa óptica al cristal centellador. Las dimensiones hasta ahora mencionadas delatan la grilla utilizada de 6x8 PMT por cámara Gamma.
+
+\subsection{Detectabilidad}
+
+% https://ieeexplore.ieee.org/document/4234313/
+% FPGA Neural Networks Implementation for Nuclear Pulses Parameters Estimation
+
+El pulso nuclear en la salida del PMT primero es acondicionado con un cancelador polo cero para acelerar la lenta constante de decaimiento del NaI de manera electrónica. Éste ingresa a un ADC y es monitoreado y detectado por una Sparta-3, la cual lo caracterizará tanto en energía como en tiempo de llegada \textit{\textbf{Acá va la referencia al paper de Dani}}. Esta información es la que se elevará a un nivel superior para realizar la triangulación entre todos los PMTs.
+Se debe tener en cuenta que un fotón genera un destello luminoso en el cristal, y este es visualizado por más de un PMT, es decir, que cada uno recojerá un porcentaje de la información puesta en juego en el centelleo.
+Es aquí donde la sincronización es crucial, ya que la ventana temporal impuesta para determinar que la información de cada uno de los PMT corresponde al mismo evento es de 1ns. En caso de que en el mismo instante alguno contenga información fuera de este intervalo será totalmente ignorado.
+Además, se cuenta con una capacidad de detección de 1 millón de eventos por segundo, es decir, que cada 1us se puede tener información nueva de las Spartan-3.
+Para poder hacer eso se define al \textit{\textbf{Centroide?}} como aquel PMT que en el instante de análisis (uno cada 1us) tiene la mayor energía. El \textit{\textbf{Centroide?}} es el que de aquí en adelante impondrá las condiciones temporales de referencia. La ventana de 1ns será aplicada en relación a la marca temporal del \textit{\textbf{Centroide?}}.
+Una vez desestimados el resto, la sumatoria de cada uno determinará la totalidad de la energía recolectada en ese instante, energía que será representativa a los 511keV en caso de haber interaccionado un Fotón de los esperados en un estudio de PET.
 
 Debajo del cristal continuo hay un array de 48 PMTs (PhotoMultiplier Tube), los cuales se encargarán de digitalizar, con un procesamiento sobre Spartan-3, la luz centellada a un valor energético proporcional a la porción de luz que le corresponde del total que generó el fotón en el centellador, y una marca temporal indicativa del momento en el cuál ese evento fue detectado. Toda esta información es recibida por una Artix-7, que se encargará de no solo filtrar temporalmente los eventos para descartar los que no participaron del mismo destello, sino de realizar la triangulación espacial (por promedio pesado de Anger\citep{Anger}) y calcular la posición en la que el fotón impactó en el cristal. De esta manera se confecciona una cámara Gamma, que es sistema capaz de detectar no solo la energía de los fotones sino también la posición del mismo.
 
-\subsection{Implementation}
+\subsection{Calibración de energías}
 
-El procesamiento planar cuenta con 48 entradas LVDS por las que cada Spartan-3 envía información cada 1us de energía detectada y marca temporal de la misma. Cada 1us, el procesamiento planar tiene que decidir si la información que está recibiendo corresponde todos al mismo evento. Para esto se utiliza una ventana temporal de 1ns para determinar el aporte individual de cada PMT en referencia a la marca temporal del que en ese momento obtuvo la mayor energía. Esta acumulación energética estará relacionada con la cantidad de luz en el centelleo del cristal detectada al mismo momento por varios PMTs. La acumulación de la historia de estas respuestas generan espectros energéticos similares al siguiente
+La física constructiva totalmente alineal en etapa de fabricación de los PMT obligó a realizar una selección exaustiva de los mismos para que funcionen de manera óptima en grupos de 48, en cierta polarización, con la misma alta tensión correspondiente a la cámara Gamma. Esto se realizó mediante un algoritmo genético luego de una intensa caracterización de cada uno de los 300 con los que se contaba al principio (recordar que en el AR-PET se cuenta con 288 PMT dispuestos de a 48 en 6 cámara Gamma diferentes). \textit{\textbf{Acá iría referencia al paper del rubio si es que lo hizo}}.
 
-FOTO DE ESPECTRO de PMT independientes y conjunto (todo sin calibrar)
+Una vez seleccionados de manera óptima para convivir con la misma alta tensión, se polarizan de manera que teniendo la mayor tasa posible de eventos no se saturen ni queden tan lejos del resto a la hora de hacer espectrometría individual de cada uno de ellos. La siguiente imagen presenta el caso de una calibración gruesa de los PMTs.
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.2]{Espectro_Sin_Calibrar.jpeg}
+\caption{Espectros sin calibrar}
+\label{fig:Espectros sin calibrar}
+\end{figure}
+
+%% SACA ESTOOOOOOOOOOOOOOOOOOOOOOOOO
+\textbf{\textit{FOTO DE ESPECTRO de PMT independientes y conjunto (todo sin calibrar)}}
+%% SACA ESTOOOOOOOOOOOOOOOOOOOOOOOOO
 
 En el caso de la Tomografía por Emisión de Positrones, la detección de fotones es mono energética y solo interesan aquellos con una energía de 511 keV. Es por esto que se realiza una calibración tal que escalando las energías de cada uno de los PMTs, se logre una espectro de energías lo más ajustado posible a 511 keV. Esta calibración es aplicada antes de la suma de las 48 energías y se obtienen lo siguientes resultados
 
-FOTO DE ESPECTRO de PMT independientes y conjunto (todo calibrado)
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.2]{Espectro_Calibrado.jpeg}
+\caption{Espectros calibrados}
+\label{fig:Espectros calibrados}
+\end{figure}
 
+%% SACA ESTOOOOOOOOOOOOOOOOOOOOOOOOO
+\textbf{\textit{FOTO DE ESPECTRO de PMT independientes y conjunto (todo calibrado)}
+}%% SACA ESTOOOOOOOOOOOOOOOOOOOOOOOOO
+
+\textbf{\textit{Acá estaría piola hablar resumido sobre esta calibración, quizá mencionar el algoritmo genético para la selección de PMT y la idea global de las cola de tiburón y la obtención los coeficientes de energía}}
+
+\subsection{Posicionamiento}
+
+Una vez detectado el evento, identificando los PMTs que entran en juego en la detección del mismo y el instante exacto en el que ocurrió, solo resta averiguar dónde fue específicamente el destello de luz en el cristal.
+
+Para esto se procede a la implementación del algoritmo de Anger, el cual realiza mediante un promedio pesado, el cálculo del centro de masa energético de todos aquellos PMTs que entran en juego en el evento. De esta manera, se logra un posicionamiento altamente entrado en el PMT que capturó más cantidad de fotones, corregido por el porcentaje energético de los PMTs de alrededor.
+
+Si bien este algoritmo no provee la localización de eventos en los bordes del cristal (se pierde medio PMT por lado), la posibilidad de rotación del equipo permite contrarestar las zonas muertas en los lados cortos, solo perdiendo ubicabilidad del lado de los anillos \textbf{(toda esta parte no sabría como escribirla bien jaja)}. Como trabajo cercano se está pensando en la implementación de redes neuronales para mejorar estas falencias de posicionamiento, ya que la implementación real sobre la FPGA nos deja espacio para este tipo de aplicaciones.
+
+De manera similar como se encuentras los coeficientes de corrección energéticos, se buscan aquellos coeficientes que logran maximizar la planicidad de la distribución de estadística a lo larga y ancho del cabezal. 
+\textbf{Hablar un poco de las multiplicaciones y sumas}
+
+La siguiente imagen es el resultado de estos posicionamientos, en los cuales se tiene consideración de realizar un adecuado ventaneo de energía. Los bordes serán extraidos posteriormente a modo de quedarse con la parte plana de estas posiciones.
+
+\textbf{FOTO DE UN ALMOHADOOOONNN}
+
+
+\clearpage
 
 
 \section{Prepare Your Paper Before Styling}
