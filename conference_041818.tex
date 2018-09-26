@@ -14,7 +14,7 @@
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
 
-\title{Paper Title*\\
+\title{Procesamiento Planar en Camara Gamma para el AR-PET sobre Artix-7\\
 %{\footnotesize \textsuperscript{*}Note: Sub-titles are not captured in Xplore and
 %should not be used}
 %\thanks{Identify applicable funding agency here. If none, delete this.}
@@ -100,7 +100,7 @@ Además, se cuenta con una capacidad de detección de 1 millón de eventos por s
 Para poder hacer eso se define al \textit{\textbf{Centroide?}} como aquel PMT que en el instante de análisis (uno cada 1us) tiene la mayor energía. El \textit{\textbf{Centroide?}} es el que de aquí en adelante impondrá las condiciones temporales de referencia. La ventana de 1ns será aplicada en relación a la marca temporal del \textit{\textbf{Centroide?}}.
 Una vez desestimados el resto, la sumatoria de cada uno determinará la totalidad de la energía recolectada en ese instante, energía que será representativa a los 511keV en caso de haber interaccionado un Fotón de los esperados en un estudio de PET.
 
-Debajo del cristal continuo hay un array de 48 PMTs (PhotoMultiplier Tube), los cuales se encargarán de digitalizar, con un procesamiento sobre Spartan-3, la luz centellada a un valor energético proporcional a la porción de luz que le corresponde del total que generó el fotón en el centellador, y una marca temporal indicativa del momento en el cuál ese evento fue detectado. Toda esta información es recibida por una Artix-7, que se encargará de no solo filtrar temporalmente los eventos para descartar los que no participaron del mismo destello, sino de realizar la triangulación espacial (por promedio pesado de Anger\citep{Anger}) y calcular la posición en la que el fotón impactó en el cristal. De esta manera se confecciona una cámara Gamma, que es sistema capaz de detectar no solo la energía de los fotones sino también la posición del mismo.
+% Debajo del cristal continuo hay un array de 48 PMTs (PhotoMultiplier Tube), los cuales se encargarán de digitalizar, con un procesamiento sobre Spartan-3, la luz centellada a un valor energético proporcional a la porción de luz que le corresponde del total que generó el fotón en el centellador, y una marca temporal indicativa del momento en el cuál ese evento fue detectado. Toda esta información es recibida por una Artix-7, que se encargará de no solo filtrar temporalmente los eventos para descartar los que no participaron del mismo destello, sino de realizar la triangulación espacial (por promedio pesado de Anger\citep{Anger}) y calcular la posición en la que el fotón impactó en el cristal. De esta manera se confecciona una cámara Gamma, que es sistema capaz de detectar no solo la energía de los fotones sino también la posición del mismo.
 
 \subsection{Calibración de energías}
 
@@ -119,7 +119,7 @@ Una vez seleccionados de manera óptima para convivir con la misma alta tensión
 \textbf{\textit{FOTO DE ESPECTRO de PMT independientes y conjunto (todo sin calibrar)}}
 %% SACA ESTOOOOOOOOOOOOOOOOOOOOOOOOO
 
-En el caso de la Tomografía por Emisión de Positrones, la detección de fotones es mono energética y solo interesan aquellos con una energía de 511 keV. Es por esto que se realiza una calibración tal que escalando las energías de cada uno de los PMTs, se logre una espectro de energías lo más ajustado posible a 511 keV. Esta calibración es aplicada antes de la suma de las 48 energías y se obtienen lo siguientes resultados
+En el caso de la Tomografía por Emisión de Positrones, la detección de fotones es mono energética y solo interesan aquellos con una energía de 511 keV. Es por esto que se realiza una calibración tal que escalando las energías de cada uno de los PMTs, se logre una espectro de energías lo más ajustado posible a 511 keV. Esta calibración es aplicada en tiempo real antes de la suma de las 48 energías, obteniendo lo siguientes resultados
 
 \begin{figure}[h]
 \centering
@@ -136,6 +136,17 @@ En el caso de la Tomografía por Emisión de Positrones, la detección de fotone
 
 \subsection{Posicionamiento}
 
+Si solo se tuviese en cuenta el \textit{\textbf{Centroide?}}, se tendría una resolución espacial sobre el cristal de 4pulgadas2... que corresponde al tamaño de un PMT. Para esto es que se aplica el algoritmo de Anger.
+
+% https://www.researchgate.net/publication/267559533
+% Referencia a una publicación de Martín sobre Anger
+
+Éste se basa en el cálculo de un centro de masas pesado por coeficientes calibrados que permiten la corrección de la ubicación en relación al porcentaje de energía recolectado por cada PMT en cada evento. 
+De manera similar a la obtención de los parámetros de calibración de energía se obtienen los parámetros de calibración en posición, sabiendo la superficie a la que se desea llegar. Estos coeficientes también son implementados en tiempo real, resolviendo la totalidad de las operaciones en el momento y en menos de 1us. Además, de la misma manera que en la energía, serán partícipes de esta sumatoria las energías calibradas de aquellos PMT que entraron en la ventana temporal de 1ns respecto al \textit{\textbf{Centroide?}}.
+La desventaja de Anger es que no resuelve los bordes, perdiendo así medio PMT por lado. Es por esto que como próximo trabajo, y dado que hay disponibilidad de espacio en las Artix-7, la implementación de redes neuronales que mejoren estos márgenes perdidos. Para contrarestar esto y promediar las eficiencias de los cristales en relación a los ángulos de incidencia de los fotones Gamma, es que el equipo tiene la capacidad de girar de manera constante y sincrónica al avance de la camilla (medición helicoidal), así minimizando estas zonas muertas \textit{\textbf{debería poner alguna referencia de la adquisición continua helicoidal?}}.
+
+
+
 Una vez detectado el evento, identificando los PMTs que entran en juego en la detección del mismo y el instante exacto en el que ocurrió, solo resta averiguar dónde fue específicamente el destello de luz en el cristal.
 
 Para esto se procede a la implementación del algoritmo de Anger, el cual realiza mediante un promedio pesado, el cálculo del centro de masa energético de todos aquellos PMTs que entran en juego en el evento. De esta manera, se logra un posicionamiento altamente entrado en el PMT que capturó más cantidad de fotones, corregido por el porcentaje energético de los PMTs de alrededor.
@@ -145,7 +156,7 @@ Si bien este algoritmo no provee la localización de eventos en los bordes del c
 De manera similar como se encuentras los coeficientes de corrección energéticos, se buscan aquellos coeficientes que logran maximizar la planicidad de la distribución de estadística a lo larga y ancho del cabezal. 
 \textbf{Hablar un poco de las multiplicaciones y sumas}
 
-La siguiente imagen es el resultado de estos posicionamientos, en los cuales se tiene consideración de realizar un adecuado ventaneo de energía. Los bordes serán extraidos posteriormente a modo de quedarse con la parte plana de estas posiciones.
+La siguiente imagen es el resultado de este procesamiento, en el que también se tuvo en cuenta la ventana de energías en la que son válidos la totalidad de los coeficientes aplicados en toda la cadena. Los bordes debido a Anger son extraídos posteriormente a modo de quedarse solo con la parte plana de las posiciones.
 
 \textbf{FOTO DE UN ALMOHADOOOONNN}
 
